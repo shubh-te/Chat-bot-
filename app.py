@@ -11,24 +11,18 @@ load_dotenv()
 
 # Streamlit Cloud ke secrets check karein, agar nahi mila toh local .env se lein
 try:
-    api_key = st.secrets["GROQ_API_KEY"]
-except (KeyError, FileNotFoundError, Exception):
+    # Streamlit secrets will have priority, otherwise use os.getenv
+    api_key = st.secrets.get("GROQ_API_KEY") or os.getenv("GROQ_API_KEY")
+except Exception:
     api_key = os.getenv("GROQ_API_KEY")
-
-# Sidebar mein API key dalne ka option (Agar cloud pe fail ho jaye)
-with st.sidebar:
-    st.header("⚙️ Settings")
-    if not api_key:
-        api_key = st.text_input("Apni Groq API Key yahan paste karein:", type="password")
-        st.markdown("[Get API Key Here](https://console.groq.com/keys)")
-    else:
-        st.success("✅ API Key Loaded!")
 
 # Groq Client setup
 if api_key:
     client = Groq(api_key=api_key)
 else:
-    st.warning("⚠️ Kripya left sidebar mein apni Groq API Key daalein (ya Streamlit Secrets set karein) taaki chatbot chal sake.")
+    st.error("⚠️ API Key Missing!")
+    st.info("Kripya Streamlit Cloud par deploy karte waqt 'Advanced settings' -> 'Secrets' mein apni API key is tarah set karein:")
+    st.code('GROQ_API_KEY="aapki_key_yahan_daalein"', language='toml')
     st.stop()
 
 st.title("🤖 Groq AI Chatbot")
