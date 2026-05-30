@@ -3,24 +3,33 @@ import os
 from dotenv import load_dotenv
 from groq import Groq
 
+# Page ka title aur UI setup
+st.set_page_config(page_title="My AI Chatbot", page_icon="🤖")
+
 # API Key load karein
 load_dotenv()
 
 # Streamlit Cloud ke secrets check karein, agar nahi mila toh local .env se lein
 try:
     api_key = st.secrets["GROQ_API_KEY"]
-except (KeyError, FileNotFoundError):
+except (KeyError, FileNotFoundError, Exception):
     api_key = os.getenv("GROQ_API_KEY")
+
+# Sidebar mein API key dalne ka option (Agar cloud pe fail ho jaye)
+with st.sidebar:
+    st.header("⚙️ Settings")
+    if not api_key:
+        api_key = st.text_input("Apni Groq API Key yahan paste karein:", type="password")
+        st.markdown("[Get API Key Here](https://console.groq.com/keys)")
+    else:
+        st.success("✅ API Key Loaded!")
 
 # Groq Client setup
 if api_key:
     client = Groq(api_key=api_key)
 else:
-    st.error("⚠️ Error: API Key nahi mili! Kripya .env file check karein.")
+    st.warning("⚠️ Kripya left sidebar mein apni Groq API Key daalein (ya Streamlit Secrets set karein) taaki chatbot chal sake.")
     st.stop()
-
-# Page ka title aur UI setup
-st.set_page_config(page_title="My AI Chatbot", page_icon="🤖")
 
 st.title("🤖 Groq AI Chatbot")
 st.markdown("Yeh chatbot Llama 3 model par chal raha hai. Aap isse kuch bhi pooch sakte hain!")
