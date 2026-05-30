@@ -102,7 +102,7 @@ if user_input:
 
             # 1st API Call (Dekhne ke liye ki tool ki zaroorat hai ya nahi)
             response = client.chat.completions.create(
-                model="llama-3.1-70b-versatile",
+                model="llama-3.3-70b-versatile",
                 messages=messages_to_send,
                 tools=tools,
                 tool_choice="auto",
@@ -141,7 +141,7 @@ if user_input:
                 
                 # 2nd API Call (Ab live data ke sath final answer banayega)
                 second_response = client.chat.completions.create(
-                    model="llama-3.1-70b-versatile",
+                    model="llama-3.3-70b-versatile",
                     messages=messages_to_send,
                     temperature=0.7,
                     max_tokens=1024
