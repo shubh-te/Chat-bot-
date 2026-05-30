@@ -30,7 +30,7 @@ st.markdown("Yeh chatbot Llama 3 model par chal raha hai. Aap isse kuch bhi pooc
 # Chat history ko session state mein save karein (taaki page refresh hone par chat delete na ho)
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "system", "content": "You are a helpful, smart, and friendly AI assistant."}
+        {"role": "system", "content": "You are an expert AI assistant. Provide highly advanced, detailed, and comprehensive answers. Explain concepts clearly and professionally."}
     ]
 
 # Purani chat history ko screen par dikhane ke liye loop
@@ -55,7 +55,7 @@ if user_input:
         try:
             # API Call
             response = client.chat.completions.create(
-                model="llama-3.1-8b-instant",
+                model="llama-3.1-70b-versatile",
                 messages=st.session_state.messages,
                 temperature=0.7,
                 max_tokens=1024
