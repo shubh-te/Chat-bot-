@@ -5,7 +5,12 @@ from groq import Groq
 
 # API Key load karein
 load_dotenv()
-api_key = os.getenv("GROQ_API_KEY")
+
+# Streamlit Cloud ke secrets check karein, agar nahi mila toh local .env se lein
+try:
+    api_key = st.secrets["GROQ_API_KEY"]
+except (KeyError, FileNotFoundError):
+    api_key = os.getenv("GROQ_API_KEY")
 
 # Groq Client setup
 if api_key:
