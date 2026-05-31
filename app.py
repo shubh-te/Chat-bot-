@@ -77,7 +77,7 @@ if user_input:
         try:
             # Dynamic system prompt (Taki current time aur date live aa sake)
             current_time = datetime.now().strftime("%d %B %Y, %I:%M %p")
-            sys_prompt = f"You are an expert AI assistant. Current Date and Time is {current_time}. Do NOT output raw text tool calls like <function> tags."
+            sys_prompt = f"You are a helpful AI assistant. Current Date and Time is {current_time}. When using tools, ensure you provide valid JSON arguments."
             
             # Message history prepare karein
             messages_to_send = [{"role": "system", "content": sys_prompt}] + [m for m in st.session_state.messages if m["role"] != "system"]
@@ -102,11 +102,11 @@ if user_input:
 
             # 1st API Call (Dekhne ke liye ki tool ki zaroorat hai ya nahi)
             response = client.chat.completions.create(
-                model="llama-3.3-70b-versatile",
+                model="llama-3.1-8b-instant",
                 messages=messages_to_send,
                 tools=tools,
                 tool_choice="auto",
-                temperature=0.7,
+                temperature=0.5,
                 max_tokens=1024
             )
             
@@ -117,7 +117,7 @@ if user_input:
                 # Bot ka tool call history me add karein
                 messages_to_send.append({
                     "role": "assistant",
-                    "content": response_msg.content,
+                    "content": response_msg.content if response_msg.content else "",
                     "tool_calls": [
                         {"id": tc.id, "type": "function", "function": {"name": tc.function.name, "arguments": tc.function.arguments}}
                         for tc in response_msg.tool_calls
@@ -142,9 +142,9 @@ if user_input:
                 
                 # 2nd API Call (Ab live data ke sath final answer banayega)
                 second_response = client.chat.completions.create(
-                    model="llama-3.3-70b-versatile",
+                    model="llama-3.1-8b-instant",
                     messages=messages_to_send,
-                    temperature=0.7,
+                    temperature=0.5,
                     max_tokens=1024
                 )
                 bot_reply = second_response.choices[0].message.content
