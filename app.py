@@ -77,7 +77,7 @@ if user_input:
         try:
             # Dynamic system prompt (Taki current time aur date live aa sake)
             current_time = datetime.now().strftime("%d %B %Y, %I:%M %p")
-            sys_prompt = f"You are an expert AI assistant. Current Date and Time is {current_time}. Whenever the user asks for current news or live updates about any topic or country, strictly use the get_live_news tool to fetch live information."
+            sys_prompt = f"You are an expert AI assistant. Current Date and Time is {current_time}. Do NOT output raw text tool calls like <function> tags."
             
             # Message history prepare karein
             messages_to_send = [{"role": "system", "content": sys_prompt}] + [m for m in st.session_state.messages if m["role"] != "system"]
@@ -117,6 +117,7 @@ if user_input:
                 # Bot ka tool call history me add karein
                 messages_to_send.append({
                     "role": "assistant",
+                    "content": response_msg.content,
                     "tool_calls": [
                         {"id": tc.id, "type": "function", "function": {"name": tc.function.name, "arguments": tc.function.arguments}}
                         for tc in response_msg.tool_calls
